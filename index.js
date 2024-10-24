@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
  res.send('Hello World');
 });
 
-app.use('/product', ProductRoutes);
+app.use('/products', ProductRoutes);
 app.use('/user', UserRoutes);
 app.use('/VanBooking', VanBookingRoutes);
 
