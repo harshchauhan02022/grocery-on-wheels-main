@@ -1,5 +1,5 @@
 // models/CustomerModels.js
-const db = require('../config/db');
+const db = require('../../config/db');
 
 const CustomerModel = {
   getAllCustomers: (callback) => {

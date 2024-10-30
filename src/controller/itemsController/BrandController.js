@@ -1,4 +1,4 @@
-const BrandModel = require('../models/BrandModels');
+const BrandModel = require('../../models/itemsModels/BrandModels');
 
 const BrandController = {
  getAllBrands: (req, res) => {

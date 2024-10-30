@@ -1,5 +1,5 @@
 const express = require('express');
-const BrandController = require('../controller/BrandController');
+const BrandController = require('../../controller/itemsController/BrandController');
 const router = express.Router();
 
 router.get('/', BrandController.getAllBrands);

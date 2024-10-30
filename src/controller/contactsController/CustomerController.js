@@ -1,5 +1,5 @@
 // controller/CustomerController.js
-const CustomerModel = require('../models/CustomerModels');
+const CustomerModel = require('../../models/contactsModels/CustomerModels');
 
 const CustomerController = {
   getAllCustomers: (req, res) => {

@@ -1,4 +1,4 @@
-const CouponModel = require('../models/CouponModels');
+const CouponModel = require('../../models/couponsModels/CouponModels');
 
 const CouponController = {
  getCoupons: (req, res) => {

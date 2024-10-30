@@ -1,4 +1,4 @@
-const SupplierModel = require('../models/SupplierModels');
+const SupplierModel = require('../../models/contactsModels/SupplierModels');
 
 const SupplierController = {
  getSuppliers: (req, res) => {

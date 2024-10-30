@@ -1,4 +1,4 @@
-const VariantModel = require('../models/VariantModel');
+const VariantModel = require('../../models/itemsModels/VariantModel');
 
 const VariantController = {
  getAllVariants: (req, res) => {

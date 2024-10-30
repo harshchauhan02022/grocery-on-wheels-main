@@ -1,5 +1,5 @@
 const express = require('express');
-const VariantController = require('../controller/VariantController');
+const VariantController = require('../../controller/itemsController/VariantController');
 const router = express.Router();
 
 router.get('/', VariantController.getAllVariants);
