@@ -42,7 +42,7 @@ const UserController = {
   },
 
   loginUser: (req, res) => {
-    console.log('Login request body:', req.body); // Debug log
+    console.log('Login request body:', req.body);
     const { usernameOrEmail, password } = req.body;
 
     if (!usernameOrEmail || !password) {
@@ -61,7 +61,8 @@ const UserController = {
       if (!user) {
         return res.status(400).json({ error: 'Invalid username or password' });
       }
-      bcrypt.compare(password, user.password, (err, isMatch) => {
+
+      bcrypt.compare(password, user.password.toString(), (err, isMatch) => {
         if (err) {
           console.error('Error comparing passwords:', err);
           return res.status(500).json({ error: 'Internal server error' });
@@ -69,10 +70,9 @@ const UserController = {
         if (!isMatch) {
           return res.status(400).json({ error: 'Invalid username or password' });
         }
-
-        // Login successful
-        return res.status(200).json({ message: 'Login successful', user: { username: user.username, email: user.email, role: user.role_name } });
+          return res.status(200).json({ message: 'Login successful', user: { username: user.username, email: user.email, role: user.role_name } });
       });
+
     });
   },
 
@@ -87,7 +87,7 @@ const UserController = {
   },
 
   deleteUser: (req, res) => {
-    const userId = req.params.id;  // Get the ID from the URL parameters
+    const userId = req.params.id;
 
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
