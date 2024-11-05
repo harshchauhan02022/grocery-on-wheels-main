@@ -1,13 +1,10 @@
 const db = require('../../config/db');
 
 const CustomerModel = {
-  // Get all customers
   getAllCustomers: (callback) => {
     const sql = 'SELECT * FROM db_customers';
     db.query(sql, callback);
   },
-
-  // Add a new customer
   addCustomer: (customerData, callback) => {
     const sql = `
       INSERT INTO db_customers (
@@ -53,8 +50,6 @@ const CustomerModel = {
 
     db.query(sql, values, callback);
   },
-
-  // Find customer by code, name, or email
   findCustomerByCode: (usernameOrEmail, callback) => {
     const sql = `
       SELECT * FROM db_customers 
@@ -67,8 +62,6 @@ const CustomerModel = {
       callback(null, results[0]);  // Return only the first matched customer
     });
   },
-
-  // Update customer
   updateCustomer: (customerData, callback) => {
     const sql = `
       UPDATE db_customers SET 
@@ -112,10 +105,20 @@ const CustomerModel = {
 
     db.query(sql, values, callback);
   },
-
-  // Delete customer by ID
   deleteCustomer: (customerId, callback) => {
     const sql = 'DELETE FROM db_customers WHERE idPrimary = ?';
+    db.query(sql, [customerId], callback);
+  },
+  updatePasswordByEmail: (email, hashedPassword, callback) => {
+    const sql = 'UPDATE db_customers SET password = ? WHERE email = ?';
+    db.query(sql, [hashedPassword, email], callback);
+  },
+  getCustomerOrderHistory: (customerId, callback) => {
+    const sql = `
+      SELECT order_id, order_date, total_amount, status
+      FROM db_orders
+      WHERE customer_id = ?
+    `;
     db.query(sql, [customerId], callback);
   }
 };

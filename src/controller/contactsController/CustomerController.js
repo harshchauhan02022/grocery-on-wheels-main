@@ -4,15 +4,12 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'yourSecretKey';
 
 const CustomerController = {
-  // Get all customers
   getAllCustomers: (req, res) => {
     CustomerModel.getAllCustomers((err, results) => {
       if (err) return res.status(500).json({ message: "Error retrieving customers", error: err });
       res.status(200).json(results);
     });
   },
-
-  // Register a new customer
   addCustomer: (req, res) => {
     const { email, password, ...customerData } = req.body;
 
@@ -47,8 +44,6 @@ const CustomerController = {
       });
     });
   },
-
-  // Login customer
   loginCustomer: (req, res) => {
     const { usernameOrEmail, password } = req.body;
     if (!usernameOrEmail || !password) {
@@ -69,8 +64,6 @@ const CustomerController = {
       res.status(200).json({ message: "Login successful", token });
     });
   },
-
-  // Update customer
   updateCustomer: (req, res) => {
     const customerData = { ...req.body, idPrimary: req.params.id };
     CustomerModel.updateCustomer(customerData, (err, result) => {
@@ -78,13 +71,35 @@ const CustomerController = {
       res.status(200).json({ message: "Customer updated successfully" });
     });
   },
-
-  // Delete customer
   deleteCustomer: (req, res) => {
     const { id } = req.params;
     CustomerModel.deleteCustomer(id, (err, result) => {
       if (err) return res.status(500).json({ message: "Error deleting customer", error: err });
       res.status(200).json({ message: "Customer deleted successfully" });
+    });
+  },
+  resetPassword: (req, res) => {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: "Email and new password are required" });
+    }
+
+    bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+      if (err) return res.status(500).json({ message: "Error hashing password" });
+
+      CustomerModel.updatePasswordByEmail(email, hashedPassword, (err, result) => {
+        if (err) return res.status(500).json({ message: "Error resetting password", error: err });
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Customer not found" });
+        res.status(200).json({ message: "Password reset successfully" });
+      });
+    });
+  },
+  getCustomerOrderHistory: (req, res) => {
+    const { id } = req.params;
+    CustomerModel.getCustomerOrderHistory(id, (err, results) => {
+      if (err) return res.status(500).json({ message: "Error retrieving order history", error: err });
+      res.status(200).json(results);
     });
   }
 };
