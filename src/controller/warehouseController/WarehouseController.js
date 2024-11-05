@@ -7,6 +7,7 @@ const warehouseController = {
    res.status(200).json(results);
   });
  },
+
  getWarehouseById: (req, res) => {
   const { id } = req.params;
   WarehouseModel.getWarehouseById(id, (err, result) => {
@@ -15,6 +16,7 @@ const warehouseController = {
    res.status(200).json(result[0]);
   });
  },
+
  addWarehouse: (req, res) => {
   const { email, mobile, ...warehouseData } = req.body;
 
@@ -23,7 +25,7 @@ const warehouseController = {
    return res.status(400).json({ message: "Invalid email format" });
   }
 
-  const mobileRegex = /^\d{10}$/; 
+  const mobileRegex = /^\d{10}$/;
   if (mobile && !mobileRegex.test(mobile)) {
    return res.status(400).json({ message: "Invalid mobile number format" });
   }

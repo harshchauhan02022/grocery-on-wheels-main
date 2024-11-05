@@ -15,7 +15,6 @@ const CustomerModel = {
         system_ip, system_name, created_by, company_id, status
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-
     const values = [
       customerData.store_id,
       customerData.count_id,
@@ -47,7 +46,6 @@ const CustomerModel = {
       customerData.company_id,
       customerData.status,
     ];
-
     db.query(sql, values, callback);
   },
   findCustomerByCode: (usernameOrEmail, callback) => {
@@ -59,21 +57,38 @@ const CustomerModel = {
     `;
     db.query(sql, [usernameOrEmail, usernameOrEmail, usernameOrEmail], (err, results) => {
       if (err) return callback(err, null);
-      callback(null, results[0]);  // Return only the first matched customer
+      callback(null, results[0]);
     });
   },
   updateCustomer: (customerData, callback) => {
     const sql = `
-      UPDATE db_customers SET 
-        store_id = ?, customer_name = ?, mobile = ?, phone = ?, email = ?, 
-        gstin = ?, tax_number = ?, vatin = ?, opening_balance = ?, 
-        sales_due = ?, sales_return_due = ?, country_id = ?, state_id = ?, 
-        city = ?, postcode = ?, address = ?, ship_country_id = ?, ship_state_id = ?, 
-        ship_city = ?, ship_postcode = ?, ship_address = ?, system_ip = ?, 
-        system_name = ?, updated_by = ?, status = ?
-      WHERE idPrimary = ?
-    `;
-
+    UPDATE db_customers SET 
+      store_id = ?, 
+      customer_name = ?, 
+      mobile = ?, 
+      phone = ?, 
+      email = ?, 
+      gstin = ?, 
+      tax_number = ?, 
+      vatin = ?, 
+      opening_balance = ?, 
+      sales_due = ?, 
+      sales_return_due = ?, 
+      country_id = ?, 
+      state_id = ?, 
+      city = ?, 
+      postcode = ?, 
+      address = ?, 
+      ship_country_id = ?, 
+      ship_state_id = ?, 
+      ship_city = ?, 
+      ship_postcode = ?, 
+      ship_address = ?, 
+      system_ip = ?, 
+      system_name = ?, 
+      status = ? 
+    WHERE id = ?;
+  `;
     const values = [
       customerData.store_id,
       customerData.customer_name,
@@ -100,9 +115,8 @@ const CustomerModel = {
       customerData.system_name,
       customerData.updated_by,
       customerData.status,
-      customerData.idPrimary,
+      customerData.id,  // Ensure this is set to the correct ID field in the customerData object
     ];
-
     db.query(sql, values, callback);
   },
   deleteCustomer: (customerId, callback) => {
@@ -113,14 +127,16 @@ const CustomerModel = {
     const sql = 'UPDATE db_customers SET password = ? WHERE email = ?';
     db.query(sql, [hashedPassword, email], callback);
   },
+
   getCustomerOrderHistory: (customerId, callback) => {
     const sql = `
-      SELECT order_id, order_date, total_amount, status
-      FROM db_orders
+      SELECT id AS order_id, purchase_date AS order_date, order_total AS total_amount, order_status AS status
+      FROM db_purchase
       WHERE customer_id = ?
     `;
     db.query(sql, [customerId], callback);
   }
+
 };
 
 module.exports = CustomerModel;

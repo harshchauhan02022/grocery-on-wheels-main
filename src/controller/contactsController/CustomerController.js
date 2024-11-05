@@ -64,13 +64,20 @@ const CustomerController = {
       res.status(200).json({ message: "Login successful", token });
     });
   },
+
   updateCustomer: (req, res) => {
-    const customerData = { ...req.body, idPrimary: req.params.id };
+    const customerData = { ...req.body, id: req.params.id };
     CustomerModel.updateCustomer(customerData, (err, result) => {
-      if (err) return res.status(500).json({ message: "Error updating customer", error: err });
+      if (err) {
+        return res.status(500).json({ message: "Error updating customer", error: err });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Customer not found" });
+      }
       res.status(200).json({ message: "Customer updated successfully" });
     });
   },
+
   deleteCustomer: (req, res) => {
     const { id } = req.params;
     CustomerModel.deleteCustomer(id, (err, result) => {

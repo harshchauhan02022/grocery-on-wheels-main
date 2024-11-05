@@ -41,7 +41,7 @@ const ExpenseCategoryController = {
    if (results.affectedRows === 0) {
     return res.status(404).json({ error: 'Category not found' });
    }
-   return res.status(204).json({ message: 'Category deleted successfully' });
+   return res.status(204).send(); 
   });
  }
 };
