@@ -6,7 +6,7 @@ router.get('/', customerController.getAllCustomers);
 router.post('/register', customerController.addCustomer);
 router.post('/login', customerController.loginCustomer);
 router.delete('/delete/:id', customerController.deleteCustomer);
-router.put('/update/:id', customerController.updateCustomer);  // Correct route for update
+router.put('/update/:id', customerController.updateCustomer); 
 router.put('/reset-password', customerController.resetPassword);
 router.get('/order-history/:id', customerController.getCustomerOrderHistory);
 

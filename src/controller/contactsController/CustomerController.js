@@ -13,7 +13,6 @@ const CustomerController = {
   addCustomer: (req, res) => {
     const { email, password, ...customerData } = req.body;
 
-    // Check if email is in a valid format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -23,20 +22,16 @@ const CustomerController = {
       return res.status(400).json({ message: "Password is required" });
     }
 
-    // Check if the customer already exists by email or customer code
     CustomerModel.findCustomerByCode(email, (err, existingCustomer) => {
       if (err) return res.status(500).json({ message: "Error checking existing customer", error: err });
       if (existingCustomer) return res.status(409).json({ message: "Customer already registered" });
 
-      // Hash the password
       bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) return res.status(500).json({ message: "Error hashing password" });
 
-        // Add hashed password to customer data
         customerData.password = hashedPassword;
         customerData.email = email;
 
-        // Register the new customer
         CustomerModel.addCustomer(customerData, (err, result) => {
           if (err) return res.status(500).json({ message: "Error adding customer", error: err });
           res.status(201).json({ message: "Customer added successfully", customerId: result.insertId });
