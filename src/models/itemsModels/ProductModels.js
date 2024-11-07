@@ -4,7 +4,15 @@ const ProductModel = {
   getAllProducts: (callback) => {
     db.query('SELECT * FROM db_items', callback);
   },
-
+  getProductById: (productId, callback) => {
+    const sql = 'SELECT * FROM db_items WHERE id = ?';
+    db.query(sql, [productId], (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      callback(null, result.length ? result[0] : null);
+    });
+  },
   createProduct: (productData, callback) => {
     const sql = `
       INSERT INTO db_items (
@@ -60,12 +68,10 @@ const ProductModel = {
 
     db.query(sql, values, callback);
   },
-
   deleteProduct: (productId, callback) => {
     const sql = 'DELETE FROM db_items WHERE id = ?';
     db.query(sql, [productId], callback);
   },
-
   updateProduct: (productId, updatedData, callback) => {
     const sql = `
       UPDATE db_items SET

@@ -4,7 +4,5 @@ const purchaseController = require('../../controller/ordersController/PurchaseCo
 
 router.post('/create', purchaseController.createPurchase);
 router.get('/order/:id', purchaseController.getOrderDetails);
-router.post('/return', purchaseController.createPurchaseReturn);
-router.get('/return/:id', purchaseController.getPurchaseReturnById);
 
 module.exports = router;

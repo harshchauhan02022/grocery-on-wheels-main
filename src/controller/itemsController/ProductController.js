@@ -9,7 +9,18 @@ const ProductController = {
       res.status(200).json(products);
     });
   },
-
+  getProductById: (req, res) => {
+    const productId = req.params.id;
+    ProductModel.getProductById(productId, (err, product) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error: ' + err.message });
+      }
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      res.status(200).json(product);
+    });
+  },
   createProduct: (req, res) => {
     const productData = {
       store_id: req.body.store_id,
@@ -43,7 +54,6 @@ const ProductController = {
       res.status(201).json({ message: 'Product created successfully', productId: result.insertId });
     });
   },
-
   deleteProduct: (req, res) => {
     const productId = req.params.id;
     ProductModel.deleteProduct(productId, (err, result) => {
@@ -56,7 +66,6 @@ const ProductController = {
       res.status(200).json({ message: "Product deleted successfully" });
     });
   },
-
   updateProduct: (req, res) => {
     const productId = req.params.id;
     const updatedData = {

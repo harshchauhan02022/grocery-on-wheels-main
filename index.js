@@ -12,12 +12,14 @@ const VariantRoutes = require('./src/routes/itemsRoutes/VariantRoutes')
 const ExpenseRoutes = require('./src/routes/expenseRoutes/ExpenseRoutes')
 const ExpenseCategoryRoutes = require('./src/routes/expenseRoutes/ExpenseCategoryRoutes')
 const WarehouseRoutes = require('./src/routes/warehouseRoutes/WarehouseRoutes')
-const ShippingRoutes =  require('./src/routes/shippingRoutes/ShippingRoutes')
+const ShippingRoutes = require('./src/routes/shippingRoutes/ShippingRoutes')
 const PurchasesRoutes = require('./src/routes/ordersRoutes/PurchaseRoutes')
+const PurchaseReturnRoutes = require('./src/routes/ordersRoutes/PurchaseReturnRoutes')
+const paymentRoutes = require('./src/routes/ordersRoutes/PaymentRoutes')
 const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
  res.send('Hello World');
@@ -36,7 +38,7 @@ app.use('/expense', ExpenseRoutes);
 app.use('/expense_category', ExpenseCategoryRoutes);
 app.use('/warehouse', WarehouseRoutes);
 app.use('/shipping', ShippingRoutes);
-app.use('/purchases', PurchasesRoutes);
+app.use('/purchases', PurchasesRoutes, PurchaseReturnRoutes, paymentRoutes);
 
 
 

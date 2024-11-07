@@ -115,7 +115,7 @@ const CustomerModel = {
       customerData.system_name,
       customerData.updated_by,
       customerData.status,
-      customerData.id,  // Ensure this is set to the correct ID field in the customerData object
+      customerData.id,
     ];
     db.query(sql, values, callback);
   },
@@ -127,15 +127,42 @@ const CustomerModel = {
     const sql = 'UPDATE db_customers SET password = ? WHERE email = ?';
     db.query(sql, [hashedPassword, email], callback);
   },
-
   getCustomerOrderHistory: (customerId, callback) => {
     const sql = `
-      SELECT id AS order_id, purchase_date AS order_date, order_total AS total_amount, order_status AS status
-      FROM db_purchase
-      WHERE customer_id = ?
+      SELECT 
+        dp.id AS order_id,
+        dp.purchase_date AS order_date,
+        dp.purchase_status AS status,
+        dpi.store_id,
+        dpi.price
+      FROM db_purchase dp
+      LEFT JOIN db_items dpi ON dp.id = dpi.id
+      WHERE dp.id = ?
     `;
     db.query(sql, [customerId], callback);
+  },
+  saveResetTokenForCustomer: (email, token, callback) => {
+    const sql = 'UPDATE db_customers SET reset_token = ? WHERE email = ?';
+    db.query(sql, [token, email], callback);
+  },
+  
+  findCustomerByEmail: (email, callback) => {
+    const query = 'SELECT * FROM db_customers WHERE email = ?';
+    db.query(query, [email], (err, results) => {
+      if (err) return callback(err, null);
+      if (results.length > 0) {
+        return callback(null, results[0]);  
+      }
+      return callback(null, null);  
+    });
+  },
+  
+  clearResetToken: (email, callback) => {
+    const sql = 'UPDATE db_customers SET reset_token = NULL WHERE email = ?';
+    db.query(sql, [email], callback);
   }
+  
+
 
 };
 
