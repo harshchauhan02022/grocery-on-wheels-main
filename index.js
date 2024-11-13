@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const ProductRoutes = require('./src/routes/itemsRoutes/ProductRoutes');
 const UserRoutes = require('./src/routes/UserRoutes');
@@ -16,8 +17,10 @@ const ShippingRoutes = require('./src/routes/shippingRoutes/ShippingRoutes')
 const PurchasesRoutes = require('./src/routes/ordersRoutes/PurchaseRoutes')
 const PurchaseReturnRoutes = require('./src/routes/ordersRoutes/PurchaseReturnRoutes')
 const paymentRoutes = require('./src/routes/ordersRoutes/PaymentRoutes')
+const BillsRoutes = require('./src/routes/billsRoutes/BillsRoutes')
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -39,6 +42,7 @@ app.use('/expense_category', ExpenseCategoryRoutes);
 app.use('/warehouse', WarehouseRoutes);
 app.use('/shipping', ShippingRoutes);
 app.use('/purchases', PurchasesRoutes, PurchaseReturnRoutes, paymentRoutes);
+app.use('/bills', BillsRoutes)
 
 
 
