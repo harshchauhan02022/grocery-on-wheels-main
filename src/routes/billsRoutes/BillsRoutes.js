@@ -3,10 +3,7 @@ const BillsController = require('../../controller/billsController/BillsControlle
 
 const router = express.Router();
 
-router.get('/', BillsController.getAllBills);
-router.get('/:id', BillsController.getBillById);
+// Route to create a bill
 router.post('/create', BillsController.createBill);
-router.put('/update/:id', BillsController.updateBill);
-router.delete('/delete/:id', BillsController.deleteBill);
 
 module.exports = router;

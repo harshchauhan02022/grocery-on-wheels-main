@@ -1,89 +1,65 @@
-const BillsModels = require('../../models/billsModels/BillsModels.js');
+const BillsModels = require('../../models/billsModels/BillsModels');
 
 const BillsController = {
- getAllBills: async (req, res) => {
-  try {
-   const bills = await BillsModels.getAll();
-   res.status(200).json(bills);
-  } catch (error) {
-   res.status(500).json({ error: 'Failed to fetch bills' });
-  }
- },
+  createBill: async (req, res) => {
+    try {
+      const { date, amount } = req.body;
 
- getBillById: async (req, res) => {
-  const { id } = req.params;
-  try {
-   const bill = await BillsModels.getById(id);
-   if (!bill) {
-    return res.status(404).json({ error: 'Bill not found' });
-   }
-   res.status(200).json(bill);
-  } catch (error) {
-   res.status(500).json({ error: 'Failed to fetch bill' });
-  }
- },
+      // Validate input
+      if (!date || !amount || amount <= 0) {
+        return res.status(400).json({ error: 'Valid date and positive amount are required.' });
+      }
 
- createBill: async (req, res) => {
-  const { serial_number, date, total_amount, status, remarks } = req.body;
+      // Fetch items for the bill
+      const items = await BillsModels.fetchItemsForBill();
 
-  if (!serial_number || !date || !total_amount) {
-   return res.status(400).json({ error: 'Missing required fields' });
-  }
+      if (!Array.isArray(items) || items.length === 0) {
+        return res.status(404).json({ error: 'No items available to generate a bill.' });
+      }
 
-  try {
-   const newBill = await BillsModels.create({
-    serial_number,
-    date,
-    total_amount,
-    status: status || 'Pending',
-    remarks: remarks || null,
-   });
+      // Select items for the bill
+      let currentAmount = 0;
+      const billItems = [];
 
-   res.status(201).json({
-    message: 'Bill created successfully',
-    data: newBill,
-   });
-  } catch (error) {
-   res.status(500).json({ error: 'Failed to create bill' });
-  }
- },
+      for (const item of items) {
+        if (currentAmount + item.price > amount) {
+          continue;
+        }
 
- updateBill: async (req, res) => {
-  const { id } = req.params;
-  const { serial_number, date, total_amount, status, remarks } = req.body;
+        currentAmount += item.price;
+        billItems.push({
+          id: item.id,
+          item_name: item.item_name,
+          quantity: 1,
+          price: item.price,
+          item_total: item.price,
+        });
 
-  try {
-   const updatedBill = await BillsModels.update(id, {
-    serial_number,
-    date,
-    total_amount,
-    status,
-    remarks,
-   });
+        if (currentAmount >= amount) break;
+      }
 
-   if (!updatedBill) {
-    return res.status(404).json({ error: 'Bill not found' });
-   }
+      // Ensure the total meets the required amount
+      if (currentAmount < amount) {
+        return res.status(400).json({ error: 'Cannot create bill as the items do not meet the required amount.' });
+      }
 
-   res.status(200).json({ message: 'Bill updated successfully', data: updatedBill });
-  } catch (error) {
-   res.status(500).json({ error: 'Failed to update bill' });
-  }
- },
+      // Save the bill in the database
+      const billId = await BillsModels.saveBill({ date, amount, billItems });
 
- deleteBill: async (req, res) => {
-  const { id } = req.params;
-
-  try {
-   const deleted = await BillsModels.delete(id);
-   if (!deleted) {
-    return res.status(404).json({ error: 'Bill not found' });
-   }
-   res.status(200).json({ message: 'Bill deleted successfully' });
-  } catch (error) {
-   res.status(500).json({ error: 'Failed to delete bill' });
-  }
- },
+      // Respond with success
+      return res.status(201).json({
+        message: 'Bill created successfully.',
+        billId,
+        date,
+        amount,
+        items: billItems,
+        total: currentAmount,
+      });
+    } catch (error) {
+      console.error('Error creating bill:', error.message);
+      return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+  },
 };
 
 module.exports = BillsController;
