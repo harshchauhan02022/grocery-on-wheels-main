@@ -21,8 +21,6 @@ const BillsModels = {
         throw new Error('No items available for the bill');
       }
 
-      // console.log(">>>>>>>>>>>> results", results)
-
       const target = amount;
       let bestSum = 0;
       const bestCombination = [];
