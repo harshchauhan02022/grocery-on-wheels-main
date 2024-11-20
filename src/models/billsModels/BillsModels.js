@@ -21,7 +21,7 @@ const BillsModels = {
         throw new Error('No items available for the bill');
       }
 
-      console.log(">>>>>>>>>>>> mohit results", results)
+      // console.log(">>>>>>>>>>>> results", results)
 
       const target = amount;
       let bestSum = 0;
