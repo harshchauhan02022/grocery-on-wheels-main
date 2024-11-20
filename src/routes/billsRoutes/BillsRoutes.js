@@ -3,7 +3,6 @@ const BillsController = require('../../controller/billsController/BillsControlle
 
 const router = express.Router();
 
-// Route to create a bill
 router.post('/create', BillsController.createBill);
 
 module.exports = router;

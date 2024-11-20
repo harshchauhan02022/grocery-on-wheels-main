@@ -19,6 +19,7 @@ const PurchaseReturnRoutes = require('./src/routes/ordersRoutes/PurchaseReturnRo
 const paymentRoutes = require('./src/routes/ordersRoutes/PaymentRoutes')
 const BillsRoutes = require('./src/routes/billsRoutes/BillsRoutes')
 const app = express();
+app.use(express.json());
 
 app.use(cors());
 app.use(bodyParser.json());
