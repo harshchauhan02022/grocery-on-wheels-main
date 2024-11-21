@@ -9,8 +9,4 @@ router.get('/BySerNo/:serial_no', BillsController.getBillBySerialNo);
 router.get('/ById/:id', BillsController.getBillById);
 router.post('/createMultipleBills', BillsController.createMultipleBills);
 
-
-
-
-
 module.exports = router;

@@ -41,7 +41,6 @@ const BillsModels = {
       throw error;
     }
   },
-
   saveBill: async ({ date, amount, billItems, serial_no }) => {
     try {
       const billQuery = `
@@ -60,7 +59,6 @@ const BillsModels = {
         INSERT INTO db_bill_items (bill_id, item_name, quantity, price, item_total) 
         VALUES (?, ?, ?, ?, ?)
       `;
-
       const insertPromises = billItems.map((item) =>
         new Promise((resolve, reject) => {
           db.query(
@@ -79,9 +77,7 @@ const BillsModels = {
           );
         })
       );
-
       await Promise.all(insertPromises);
-
       return billId;
     } catch (error) {
       console.error('Error saving bill:', error.message);
@@ -122,7 +118,6 @@ const BillsModels = {
   fetchBillBySerialNo: async (serial_no) => {
     try {
       const query = `SELECT * FROM db_aoutobiils WHERE serial_no = ?`;
-
       const results = await new Promise((resolve, reject) => {
         db.query(query, [serial_no], (err, results) => {
           if (err) return reject(err);
