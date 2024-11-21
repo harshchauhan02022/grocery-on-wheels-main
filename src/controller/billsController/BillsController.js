@@ -90,6 +90,69 @@ const BillsController = {
       return res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
   },
+  createMultipleBills: async (req, res) => {
+    try {
+      const bills = req.body.bills; 
+  
+      if (!Array.isArray(bills) || bills.length === 0) {
+        return res.status(400).json({ error: 'At least one bill is required to create.' });
+      }
+  
+      const createdBills = [];
+  
+      for (const bill of bills) {
+        const { date, amount, serial_no } = bill;
+  
+        if (!date || !amount || amount <= 0) {
+          return res
+            .status(400)
+            .json({ error: 'Valid date and positive amount are required for all bills.' });
+        }
+        if (amount > 100000) {
+          return res
+            .status(400)
+            .json({ error: 'Amount cannot exceed 100,000 for any bill.' });
+        }
+  
+        const generatedSerialNo = serial_no || `BILL-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const items = await BillsModels.fetchItemsForBill(amount);
+  
+        if (!Array.isArray(items) || items.length === 0) {
+          return res.status(404).json({ error: 'No items available to generate one or more bills.' });
+        }
+  
+        const billItems = items.map((item) => ({
+          item_name: item.item_name,
+          quantity: 1,
+          price: item.price,
+          item_total: item.price,
+        }));
+  
+        const billId = await BillsModels.saveBill({
+          date,
+          amount,
+          billItems,
+          serial_no: generatedSerialNo,
+        });
+  
+        createdBills.push({
+          billId,
+          serial_no: generatedSerialNo,
+          date,
+          amount,
+          items: billItems,
+        });
+      }
+  
+      return res.status(201).json({
+        message: 'Multiple bills created successfully.',
+        createdBills,
+      });
+    } catch (error) {
+      console.error('Error creating multiple bills:', error.message);
+      return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+  },  
 };
 
 module.exports = BillsController;
