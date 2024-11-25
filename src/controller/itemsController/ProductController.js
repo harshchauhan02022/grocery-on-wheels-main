@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const ProductModel = require('../../models/itemsModels/ProductModels');
 
 const ProductController = {
@@ -22,37 +24,80 @@ const ProductController = {
     });
   },
   createProduct: (req, res) => {
-    const productData = {
-      store_id: req.body.store_id,
-      count_id: req.body.count_id,
-      item_code: req.body.item_code,
-      item_name: req.body.item_name,
-      category_id: req.body.category_id,
-      sub_category_id: req.body.sub_category_id,
-      sku: req.body.sku,
-      hsn: req.body.hsn,
-      unit_id: req.body.unit_id,
-      alert_qty: req.body.alert_qty,
-      seller_points: req.body.seller_points,
-      custom_barcode: req.body.custom_barcode,
-      price: req.body.price,
-      tax_id: req.body.tax_id,
-      tax_type: req.body.tax_type,
-      profit_margin: req.body.profit_margin,
-      sales_price: req.body.sales_price,
-      discount_type: req.body.discount_type,
-      discount: req.body.discount,
-      description: req.body.description,
-      mrp: req.body.mrp,
-      expire_date: req.body.expire_date
-    };
+    try {
+      const {
+        store_id,
+        count_id,
+        item_code,
+        item_name,
+        category_id,
+        sub_category_id,
+        sku,
+        hsn,
+        unit_id,
+        alert_qty,
+        seller_points,
+        custom_barcode,
+        price,
+        tax_id,
+        tax_type,
+        profit_margin,
+        sales_price,
+        discount_type,
+        discount,
+        description,
+        mrp,
+        expire_date,
+        item_image,
+      } = req.body;
 
-    ProductModel.createProduct(productData, (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: 'Error inserting product: ' + err.message });
+      let imagePath = null;
+      if (item_image) {
+        const uploadPath = path.join(__dirname, '../../../public', item_image);
+        // console.log("harsh ......>>>>", uploadPath);
+        if (!fs.existsSync(uploadPath)) {
+          return res.status(400).json({ error: `File not found: ${item_image}` });
+        }
+        imagePath = item_image;
       }
-      res.status(201).json({ message: 'Product created successfully', productId: result.insertId });
-    });
+      const productData = {
+        store_id,
+        count_id,
+        item_code,
+        item_name,
+        category_id,
+        sub_category_id,
+        sku,
+        hsn,
+        unit_id,
+        alert_qty,
+        seller_points,
+        custom_barcode,
+        price,
+        tax_id,
+        tax_type,
+        profit_margin,
+        sales_price,
+        discount_type,
+        discount,
+        description,
+        mrp,
+        expire_date,
+        item_image: imagePath,
+      };
+
+      ProductModel.createProduct(productData, (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error inserting product: ' + err.message });
+        }
+        res.status(201).json({
+          message: 'Product created successfully',
+          productId: result.insertId,
+        });
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error: ' + error.message });
+    }
   },
   deleteProduct: (req, res) => {
     const productId = req.params.id;

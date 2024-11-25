@@ -17,7 +17,11 @@ const ShippingRoutes = require('./src/routes/shippingRoutes/ShippingRoutes')
 const PurchasesRoutes = require('./src/routes/ordersRoutes/PurchaseRoutes')
 const PurchaseReturnRoutes = require('./src/routes/ordersRoutes/PurchaseReturnRoutes')
 const paymentRoutes = require('./src/routes/ordersRoutes/PaymentRoutes')
-const BillsRoutes = require('./src/routes/billsRoutes/BillsRoutes')
+const BillsRoutes = require('./src/routes/billsRoutes/billsRoutes');  
+const BarcodeRoutes = require('./src/routes/billsRoutes/barcodeRoutes');
+
+
+
 const app = express();
 app.use(express.json());
 
@@ -43,7 +47,9 @@ app.use('/expense_category', ExpenseCategoryRoutes);
 app.use('/warehouse', WarehouseRoutes);
 app.use('/shipping', ShippingRoutes);
 app.use('/purchases', PurchasesRoutes, PurchaseReturnRoutes, paymentRoutes);
-app.use('/bills', BillsRoutes)
+app.use('/bills', BillsRoutes);
+app.use('/Barcode', BarcodeRoutes)
+
 
 
 

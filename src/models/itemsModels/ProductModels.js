@@ -20,25 +20,26 @@ const ProductModel = {
         count_id,
         item_code,
         item_name,
-        category_id, 
-        sub_category_id, 
+        category_id,
+        sub_category_id,
         sku,
         hsn,
-        unit_id, 
+        unit_id,
         alert_qty,
         seller_points,
         custom_barcode,
-        price, 
+        price,
         tax_id,
         tax_type,
         profit_margin,
         sales_price,
-        discount_type, 
-        discount, 
-        description, 
+        discount_type,
+        discount,
+        description,
         mrp,
-        expire_date
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        expire_date,
+        item_image
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const values = [
@@ -63,7 +64,8 @@ const ProductModel = {
       productData.discount,
       productData.description,
       productData.mrp,
-      productData.expire_date
+      productData.expire_date,
+      productData.item_image,
     ];
 
     db.query(sql, values, callback);
