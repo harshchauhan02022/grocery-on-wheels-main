@@ -1,4 +1,4 @@
-const CategoryModel = require('../../models/itemsModels/CategoryModels');
+const CategoryModel = require('../../models/categorysModels/CategoryModels');
 
 const CategoryController = {
  getAllCategories: (req, res) => {

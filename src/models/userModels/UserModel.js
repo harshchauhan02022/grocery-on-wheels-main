@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 
 const UserModel = {
   getAllUsers: (callback) => {
@@ -13,18 +13,22 @@ const UserModel = {
   },
 
   registerUser: (userData, callback) => {
-    const { username, firstName, lastName, mobile, email, role, password } = userData;
+    const { username, firstName, lastName, mobile, email, role, password, photo, gender, dob, country, state, city } = userData;
     const query = `
-      INSERT INTO db_users (username, first_name, last_name, mobile, email, role_name, password)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO db_users (username, first_name, last_name, mobile, email, role_name, password, photo, gender, dob, country, state, city)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    db.query(query, [username, firstName, lastName, mobile, email, role, password], (err, result) => {
-      if (err) {
-        console.error('Database query error:', err.message);
-        return callback(err, null);
+    db.query(
+      query,
+      [username, firstName, lastName, mobile, email, role, password, photo, gender, dob, country, state, city],
+      (err, result) => {
+        if (err) {
+          console.error('Database query error:', err.message);
+          return callback(err, null);
+        }
+        callback(null, result);
       }
-      callback(null, result);
-    });
+    );
   },
 
   findUserByUsername: (username, callback) => {
@@ -42,7 +46,7 @@ const UserModel = {
     const query = `SELECT * FROM db_users WHERE email = ?`;
     db.query(query, [email], (err, results) => {
       if (err) {
-        console.error('Error finding user by email:', err.message);
+        console.error('Error querying user by email:', err.message);
         return callback(err, null);
       }
       callback(null, results[0]);
