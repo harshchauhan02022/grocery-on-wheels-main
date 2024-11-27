@@ -20,7 +20,7 @@ const paymentRoutes = require('./src/routes/ordersRoutes/PaymentRoutes')
 const BillsRoutes = require('./src/routes/billsRoutes/billsRoutes');  
 const BarcodeRoutes = require('./src/routes/billsRoutes/barcodeRoutes');
 const SubCategoryRoutes = require('./src/routes/categorysRoutes/SubCategoryRoutes')
-
+const BannerRoutes = require('./src/routes/bannerRoutes/BannerRoute')
 
 const app = express();
 app.use(express.json());
@@ -50,6 +50,7 @@ app.use('/shipping', ShippingRoutes);
 app.use('/purchases', PurchasesRoutes, PurchaseReturnRoutes, paymentRoutes);
 app.use('/bills', BillsRoutes);
 app.use('/Barcode', BarcodeRoutes)
+app.use('/banners', BannerRoutes)
 
 
 
