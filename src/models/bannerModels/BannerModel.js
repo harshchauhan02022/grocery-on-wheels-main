@@ -28,13 +28,13 @@ const BannerModel = {
     VALUES ?
   `;
   db.query(query, [bannersData], (err, results) => {
-    if (err) {
-      console.error('Database error during multiple banner insertion:', err.message);
-      return callback(err, null);
-    }
-    callback(null, results);
+   if (err) {
+    console.error('Database error during multiple banner insertion:', err.message);
+    return callback(err, null);
+   }
+   callback(null, results);
   });
-},
+ },
  updateBanner: (id, data, callback) => {
   const query = `
       UPDATE db_banners 
@@ -52,6 +52,16 @@ const BannerModel = {
   const query = `DELETE FROM db_banners WHERE id = ?`;
   db.query(query, [id], callback);
  },
+
+ createMultipleBanners: (data, callback) => {
+  const query = `
+    INSERT INTO db_banners (name, description, type, bannerItem, start_date, end_date, image, isActive, offer)
+    VALUES ?
+  `;
+
+  db.query(query, [data], callback);
+ }
+
 };
 
 module.exports = BannerModel;

@@ -88,17 +88,80 @@ const BannerController = {
  },
  deleteBanner: (req, res) => {
   const { id } = req.params;
+
+  // Validate the ID
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid banner ID' });
+  }
+
+  // Call the model function to delete the banner
   BannerModel.deleteBanner(id, (err, results) => {
+    if (err) {
+      console.error('Error deleting banner:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+
+    res.status(200).json({ message: 'Banner deleted successfully' });
+  });
+},
+
+ createMultipleBanners: (req, res) => {
+  const banners = req.body;
+
+  // Validate if the request body is a non-empty array
+  if (!Array.isArray(banners) || banners.length === 0) {
+   return res.status(400).json({ error: 'Request body must be a non-empty array of banners' });
+  }
+
+  const errors = [];
+  const dataToInsert = banners.map((banner, index) => {
+   const { name, description, type, bannerItem, startDate, endDate, image, isActive, offer } = banner;
+
+   // Validate required fields for each banner
+   if (!name || !description || !type || !bannerItem || !startDate || !endDate || !image) {
+    errors.push(`Missing required fields for banner at index ${index}`);
+    return null; // Ensure no undefined values are added to the array
+   }
+
+   return [
+    name,
+    description,
+    type,
+    bannerItem,
+    startDate,
+    endDate,
+    image,
+    isActive ?? true, // Default to true if not provided
+    offer ?? 0        // Default to 0 if not provided
+   ];
+  });
+
+  // If errors exist, respond with the errors
+  if (errors.length > 0) {
+   return res.status(400).json({ errors });
+  }
+
+  // Filter out any `null` values from the dataToInsert array
+  const filteredDataToInsert = dataToInsert.filter(Boolean);
+
+  // Insert the data into the database
+  BannerModel.createMultipleBanners(filteredDataToInsert, (err, results) => {
    if (err) {
-    console.error('Error deleting banner:', err);
+    console.error('Error creating banners:', err);
     return res.status(500).json({ error: 'Internal server error' });
    }
-   if (results.affectedRows === 0) {
-    return res.status(404).json({ error: 'Banner not found' });
-   }
-   res.status(200).json({ message: 'Banner deleted successfully' });
+
+   res.status(201).json({
+    message: 'Banners created successfully',
+    insertedRows: results.affectedRows
+   });
   });
- },
+ }
+
 };
 
 module.exports = BannerController;
