@@ -3,7 +3,6 @@ const { barcodeController, upload } = require('../../controller/billsController/
 
 const router = express.Router();
 
-// POST request to upload a barcode image
 router.post('/upload', upload.single('barcodeImage'), barcodeController.uploadBarcodeImage);
 
 module.exports = router;

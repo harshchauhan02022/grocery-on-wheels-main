@@ -41,14 +41,14 @@ const BillsModels = {
       throw error;
     }
   },
-  saveBill: async ({ date, amount, billItems, serial_no }) => {
+  saveBill: async ({ date, amount, billItems, serial_number }) => {
     try {
       const billQuery = `
-        INSERT INTO db_aoutobiils (serial_no, date, total_amount) 
+        INSERT INTO db_bills (serial_number, date, total_amount) 
         VALUES (?, ?, ?)
       `;
       const [billResult] = await new Promise((resolve, reject) => {
-        db.query(billQuery, [serial_no, date, amount], (err, results) => {
+        db.query(billQuery, [serial_number, date, amount], (err, results) => {
           if (err) return reject(err);
           resolve([results]);
         });
@@ -85,17 +85,17 @@ const BillsModels = {
     }
   },
 
-  fetchBills: async ({ serial_no, date }) => {
+  fetchBills: async ({ serial_number, date }) => {
     try {
-      let query = `SELECT * FROM db_aoutobiils`;
+      let query = `SELECT * FROM db_bills`;
       const params = [];
-      if (serial_no || date) {
+      if (serial_number || date) {
         query += ` WHERE`;
-        if (serial_no) {
-          query += ` serial_no = ?`;
-          params.push(serial_no);
+        if (serial_number) {
+          query += ` serial_number = ?`;
+          params.push(serial_number);
         }
-        if (serial_no && date) query += ` AND`;
+        if (serial_number && date) query += ` AND`;
         if (date) {
           query += ` date = ?`;
           params.push(date);
@@ -115,11 +115,11 @@ const BillsModels = {
     }
   },
 
-  fetchBillBySerialNo: async (serial_no) => {
+  fetchBillBySerialNo: async (serial_number) => {
     try {
-      const query = `SELECT * FROM db_aoutobiils WHERE serial_no = ?`;
+      const query = `SELECT * FROM db_bills WHERE serial_number = ?`;
       const results = await new Promise((resolve, reject) => {
-        db.query(query, [serial_no], (err, results) => {
+        db.query(query, [serial_number], (err, results) => {
           if (err) return reject(err);
           resolve(results[0]);
         });
@@ -127,13 +127,13 @@ const BillsModels = {
 
       return results;
     } catch (error) {
-      console.error('Error fetching bill by serial_no:', error.message);
+      console.error('Error fetching bill by serial_number:', error.message);
       throw error;
     }
   },
   fetchBillById: async (id) => {
     try {
-      const query = `SELECT * FROM db_aoutobiils WHERE id = ?`;
+      const query = `SELECT * FROM db_bills WHERE id = ?`;
 
       const results = await new Promise((resolve, reject) => {
         db.query(query, [id], (err, results) => {

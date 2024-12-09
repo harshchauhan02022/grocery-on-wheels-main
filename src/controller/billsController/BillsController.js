@@ -3,7 +3,7 @@ const BillsModels = require('../../models/billsModels/BillsModels');
 const BillsController = {
   createBill: async (req, res) => {
     try {
-      const { date, amount, serial_no } = req.body;
+      const { date, amount, serial_number } = req.body;
 
       if (!date || !amount || amount <= 0) {
         return res.status(400).json({ error: 'Valid date and positive amount are required.' });
@@ -11,7 +11,7 @@ const BillsController = {
       if (amount > 100000) {
         return res.status(400).json({ error: 'Amount cannot exceed 100,000.' });
       }
-      const generatedSerialNo = serial_no || `BILL-${Date.now()}`;
+      const generatedSerialNo = serial_number || `BILL-${Date.now()}`;
       const items = await BillsModels.fetchItemsForBill(amount);
 
       if (!Array.isArray(items) || items.length === 0) {
@@ -23,12 +23,12 @@ const BillsController = {
         price: item.price,
         item_total: item.price,
       }));
-      const billId = await BillsModels.saveBill({ date, amount, billItems, serial_no: generatedSerialNo });
+      const billId = await BillsModels.saveBill({ date, amount, billItems, serial_number: generatedSerialNo });
 
       return res.status(201).json({
         message: 'Bill created successfully.',
         billId,
-        serial_no: generatedSerialNo,
+        serial_number: generatedSerialNo,
         date,
         amount,
         items: billItems,
@@ -40,8 +40,8 @@ const BillsController = {
   },
   getBills: async (req, res) => {
     try {
-      const { serial_no, date } = req.query;
-      const bills = await BillsModels.fetchBills({ serial_no, date });
+      const { serial_number, date } = req.query;
+      const bills = await BillsModels.fetchBills({ serial_number, date });
 
       if (bills.length === 0) {
         return res.status(404).json({ message: 'No bills found.' });
@@ -55,20 +55,20 @@ const BillsController = {
   },
   getBillBySerialNo: async (req, res) => {
     try {
-      const { serial_no } = req.params;
+      const { serial_number } = req.params;
 
-      if (!serial_no) {
+      if (!serial_number) {
         return res.status(400).json({ error: 'Serial number is required.' });
       }
-      const bill = await BillsModels.fetchBillBySerialNo(serial_no);
+      const bill = await BillsModels.fetchBillBySerialNo(serial_number);
 
       if (!bill) {
-        return res.status(404).json({ message: `Bill with serial_no '${serial_no}' not found.` });
+        return res.status(404).json({ message: `Bill with serial_number '${serial_number}' not found.` });
       }
 
       return res.status(200).json({ bill });
     } catch (error) {
-      console.error('Error fetching bill by serial_no:', error.message);
+      console.error('Error fetching bill by serial_number:', error.message);
       return res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
   },
@@ -101,7 +101,7 @@ const BillsController = {
       const createdBills = [];
   
       for (const bill of bills) {
-        const { date, amount, serial_no } = bill;
+        const { date, amount, serial_number } = bill;
   
         if (!date || !amount || amount <= 0) {
           return res
@@ -114,7 +114,7 @@ const BillsController = {
             .json({ error: 'Amount cannot exceed 100,000 for any bill.' });
         }
   
-        const generatedSerialNo = serial_no || `BILL-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const generatedSerialNo = serial_number || `BILL-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
         const items = await BillsModels.fetchItemsForBill(amount);
   
         if (!Array.isArray(items) || items.length === 0) {
@@ -132,12 +132,12 @@ const BillsController = {
           date,
           amount,
           billItems,
-          serial_no: generatedSerialNo,
+          serial_number: generatedSerialNo,
         });
   
         createdBills.push({
           billId,
-          serial_no: generatedSerialNo,
+          serial_number: generatedSerialNo,
           date,
           amount,
           items: billItems,
